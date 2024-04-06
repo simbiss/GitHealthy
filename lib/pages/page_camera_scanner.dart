@@ -5,6 +5,8 @@ import 'package:marihacks7/pages/page_barcode_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BarcodeScanPage extends StatefulWidget {
+  const BarcodeScanPage({super.key});
+
   @override
   _BarcodeScanPageState createState() => _BarcodeScanPageState();
 }
@@ -52,7 +54,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scan Barcode"),
+        title: const Text("Scan Barcode"),
       ),
       body: Center(
         child: Column(
