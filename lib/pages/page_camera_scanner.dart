@@ -86,7 +86,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Text('Welcome, $_userName',
-                    style: Theme.of(context).textTheme.headline6),
+                    ),
               ),
             ElevatedButton(
               onPressed: startBarcodeScan,
