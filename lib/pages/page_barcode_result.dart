@@ -235,6 +235,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
+                        scrollDirection: Axis.horizontal,
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           var item = snapshot.data![index];
@@ -251,6 +252,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
             },
                             
                             child: Column(
+                              
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.network(item['image_url'],
