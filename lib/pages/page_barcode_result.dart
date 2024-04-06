@@ -2,14 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:marihacks7/pages/page_camera_scanner.dart';
 import 'package:marihacks7/pages/page_scan_history.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:flutter/material.dart';
-import 'package:marihacks7/service/checkBarcode.dart';
-import 'package:http/http.dart' as http;
 
 Future<Product> fetchProduct(String barcodeResult) async {
   final response = await http.get(Uri.parse(
@@ -94,7 +91,7 @@ class BarcodeResultPage extends StatefulWidget {
 
 class _BarcodeResultPageState extends State<BarcodeResultPage> {
   late Future<Product> futureProduct;
-  int selectedIndex = 0;
+  int selectedIndex = 1;
   @override
   void initState() {
     super.initState();
@@ -138,111 +135,106 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Scanned Barcode'),
-        ),
-        body: Center(
-          child: FutureBuilder<Product>(
-            future: futureProduct,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Card(
-                  elevation: 12,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+  appBar: AppBar(
+    title: const Text('Scanned Barcode'),
+  ),
+  body: Center(
+    child: FutureBuilder<Product>(
+      future: futureProduct,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Card(
+            elevation: 12,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(20),
                   ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(20),
-                          topLeft: Radius.circular(20),
-                        ),
-                        child: Image.network(
-                          snapshot.data!.product.imageFrontUrl,
-                          height: 500,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      ),
-                      ListTile(
-                          title: Text(snapshot.data!.product.productName),
-                          subtitle: Text(snapshot.data!.code)),
-                    ],
+                  child: Image.network(
+                    snapshot.data!.product.imageFrontUrl,
+                    height: 500,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
                   ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
-            },
-          ),
-        ),
-        bottomNavigationBar: Container(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: GNav(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              tabBackgroundColor: Theme.of(context).colorScheme.primary,
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              gap: 12,
-              padding: const EdgeInsets.all(20),
-              selectedIndex: 0,
-              onTabChange: (index) {
-                setState(() {
-                  selectedIndex = index;
-                  if (selectedIndex == 0) {
-                    /* 
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            pageProfil(), //remplacer par le nom de la  page,
-                      ),
-                    );
-                    */
-                  }
-                  if (selectedIndex == 1) {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            HistoryPage(),
-                      ),
-                    );
-                  }
-                  if (selectedIndex == 2) {
-                    /* 
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            pageProfil(), //remplacer par le nom de la  page,
-                      ),
-                    );
-                    */
-                  }
-                });
-              },
-              tabs: const [
-                GButton(
-                  icon: Icons.map_outlined,
-                  text: 'Map',
                 ),
-                GButton(
-                  icon: Icons.sunny,
-                  text: 'Weather',
+                ListTile(
+                  title: Text(snapshot.data!.product.productName),
+                  subtitle: Text(snapshot.data!.code),
                 ),
-                GButton(
-                  icon: Icons.account_circle,
-                  text: 'Profile',
-                )
               ],
             ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    ),
+  ),
+  bottomNavigationBar: Container(
+    color: Theme.of(context).colorScheme.secondaryContainer,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      child: GNav(
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        tabBackgroundColor: Theme.of(context).colorScheme.primary,
+        activeColor: Theme.of(context).colorScheme.onPrimary,
+        gap: 12,
+        padding: const EdgeInsets.all(20),
+        selectedIndex: 0,
+        onTabChange: (index) {
+          setState(() {
+            selectedIndex = index;
+            if (selectedIndex == 0) {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      HistoryPage(),
+                ),
+              );
+            }
+            if (selectedIndex == 1) {
+              // startBarcodeScan;
+            }
+            if (selectedIndex == 2) {
+              /* 
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      pageProfil(), //remplacer par le nom de la  page,
+                ),
+              );
+              */
+            }
+          });
+        },
+        tabs: const [
+          GButton(
+            icon: Icons.history,
+            text: 'History',
           ),
-        ));
+          GButton(
+            icon: Icons.barcode_reader,
+            text: 'Scan',
+          ),
+          GButton(
+            icon: Icons.account_circle,
+            text: 'Profile',
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
   }
 }

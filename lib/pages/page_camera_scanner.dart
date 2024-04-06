@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:marihacks7/pages/page_scan_history.dart';
 import 'package:marihacks7/pages/page_username.dart';
 import 'package:marihacks7/service/scan_service.dart';
 import 'package:marihacks7/pages/page_barcode_result.dart';
@@ -16,6 +18,7 @@ class BarcodeScanPage extends StatefulWidget {
 class _BarcodeScanPageState extends State<BarcodeScanPage> {
   final ScanService _scanService = ScanService();
   String _userName = '';
+  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -58,7 +61,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
     }
   }
 
-  void _startBarcodeScan() async {
+  void startBarcodeScan() async {
     String barcodeResult = await _scanService.scanBarcode();
     if (barcodeResult.isNotEmpty) {
       Navigator.of(context).push(
@@ -86,7 +89,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                     style: Theme.of(context).textTheme.headline6),
               ),
             ElevatedButton(
-              onPressed: _startBarcodeScan,
+              onPressed: startBarcodeScan,
               child: Text('Start Scanning'),
             ),
             SizedBox(height: 10), // Spacing between buttons
@@ -101,6 +104,62 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: GNav(
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              tabBackgroundColor: Theme.of(context).colorScheme.primary,
+              activeColor: Theme.of(context).colorScheme.onPrimary,
+              gap: 12,
+              padding: const EdgeInsets.all(20),
+              selectedIndex: 0,
+              onTabChange: (index) {
+                setState(() {
+                  selectedIndex = index;
+                  if (selectedIndex == 0) {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            HistoryPage(),
+                      ),
+                    );
+                  }
+                  if (selectedIndex == 1) {
+                    startBarcodeScan;
+                  }
+                  if (selectedIndex == 2) {
+                    /* 
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            pageProfil(), //remplacer par le nom de la  page,
+                      ),
+                    );
+                    */
+                  }
+                });
+              },
+              tabs: const [
+                GButton(
+                  icon: Icons.history,
+                  text: 'History',
+                ),
+                GButton(
+                  icon: Icons.barcode_reader,
+                  text: 'Scan',
+                ),
+                GButton(
+                  icon: Icons.account_circle,
+                  text: 'Profile',
+                )
+              ],
+            ),
+          ),
+        )
     );
   }
 }

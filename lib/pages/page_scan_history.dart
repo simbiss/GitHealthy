@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,6 @@ class ScannedItem {
 
 class DetailedItemPage extends StatelessWidget {
   final ScannedItem item;
-
   const DetailedItemPage({Key? key, required this.item}) : super(key: key);
 
   @override
@@ -65,7 +65,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   List<ScannedItem> scannedHistory = [];
-
+  int selectedIndex = 1;
   @override
   void initState() {
     super.initState();
@@ -75,6 +75,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Future<void> _fetchScannedItems() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? username = prefs.getString('userName');
+    int selectedIndex = 0;
 
     if (username == null) {
       print("Username not found");
@@ -140,6 +141,62 @@ class _HistoryPageState extends State<HistoryPage> {
           );
         },
       ),
+           bottomNavigationBar: Container(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: GNav(
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              tabBackgroundColor: Theme.of(context).colorScheme.primary,
+              activeColor: Theme.of(context).colorScheme.onPrimary,
+              gap: 12,
+              padding: const EdgeInsets.all(20),
+              selectedIndex: 0,
+              onTabChange: (index) {
+                setState(() {
+                  selectedIndex = index;
+                  if (selectedIndex == 0) {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            HistoryPage(),
+                      ),
+                    );
+                  }
+                  if (selectedIndex == 1) {
+                    // startBarcodeScan;
+                  }
+                  if (selectedIndex == 2) {
+                    /* 
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            pageProfil(), //remplacer par le nom de la  page,
+                      ),
+                    );
+                    */
+                  }
+                });
+              },
+              tabs: const [
+                GButton(
+                  icon: Icons.history,
+                  text: 'History',
+                ),
+                GButton(
+                  icon: Icons.barcode_reader,
+                  text: 'Scan',
+                ),
+                GButton(
+                  icon: Icons.account_circle,
+                  text: 'Profile',
+                )
+              ],
+            ),
+          ),
+        )
     );
   }
 }
