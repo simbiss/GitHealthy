@@ -3,6 +3,8 @@ import 'package:marihacks7/pages/page_username.dart';
 import 'package:marihacks7/service/scan_service.dart';
 import 'package:marihacks7/pages/page_barcode_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class BarcodeScanPage extends StatefulWidget {
   @override
@@ -32,9 +34,26 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
 
   Future<void> _clearUserName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userName');
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => WelcomePage()));
+    final String? userName = prefs.getString('userName');
+
+    if (userName != null) {
+      final Uri apiUri = Uri.parse('http://v34l.com:8080/api/$userName');
+      try {
+        final response = await http
+            .delete(apiUri, headers: {"Content-Type": "application/json"});
+
+        if (response.statusCode == 200) {
+          await prefs.remove('userName');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => WelcomePage()),
+          );
+        } else {
+          print('Failed to delete user from the server: ${response.body}');
+        }
+      } catch (e) {
+        print('Error making DELETE request: $e');
+      }
+    }
   }
 
   void _startBarcodeScan() async {
