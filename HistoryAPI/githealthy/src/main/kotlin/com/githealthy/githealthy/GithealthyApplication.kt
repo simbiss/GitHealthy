@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
 }
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 class UserController {
 
     // Use environment variables or other secure methods to load sensitive information like connection strings
