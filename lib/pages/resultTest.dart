@@ -214,43 +214,61 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   }
 
   Future<void> _addBarcodeToDatabase(String barcodeResult) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? username = prefs.getString('userName');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? username = prefs.getString('userName');
 
-    if (username == null) {
-      print("Username not found");
-      return;
-    }
+  if (username == null) {
+    print("Username not found");
+    return;
+  }
 
-    final Uri uri =
-        Uri.parse('http://v34l.com:8080/api/$username/barcodes/$barcodeResult');
+  final Uri uri = Uri.parse('http://v34l.com:8080/api/$username/barcodes/$barcodeResult');
 
-    try {
-      final response = await http.post(
+  try {
+    // Fetch data from OpenFoodFacts API
+    final apiUrl = 'https://world.openfoodfacts.org/api/v0/product/$barcodeResult.json';
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final productData = jsonDecode(response.body);
+      final imageUrl = productData['product']['image_front_url'];
+      final productName = productData['product']['product_name'];
+
+      final addResponse = await http.post(
         uri,
         headers: {
           "Content-Type": "application/json",
         },
-        body: jsonEncode({}),
+        body: jsonEncode({
+          "imageUrl": imageUrl,
+          "productName": productName,
+        }),
       );
 
-      if (response.statusCode == 200) {
+      if (addResponse.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Barcode added successfully')),
         );
       } else {
-        print('Failed to add barcode: ${response.body}');
+        print('Failed to add barcode: ${addResponse.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to add barcode')),
         );
       }
-    } catch (e) {
-      print('Error adding barcode: $e');
+    } else {
+      print('Failed to fetch product data from OpenFoodFacts API');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error adding barcode')),
+        SnackBar(content: Text('Failed to fetch product data')),
       );
     }
+  } catch (e) {
+    print('Error adding barcode: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error adding barcode')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
