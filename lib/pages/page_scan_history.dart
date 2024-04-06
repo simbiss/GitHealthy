@@ -37,7 +37,7 @@ class ScannedItem {
 class DetailedItemPage extends StatelessWidget {
   final ScannedItem item;
   const DetailedItemPage({Key? key, required this.item}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,43 +107,43 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Historique'),
-      ),
-      body: ListView.builder(
-        itemCount: scannedHistory.length,
-        itemBuilder: (context, index) {
-          final item = scannedHistory[index];
-          return InkWell(
-            onTap: () {
-              // Navigate to a detailed page when tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>ProductDetailsPage(barcodeResult: item.barcode)
+        appBar: AppBar(
+          title: Text('History'),
+        ),
+        body: ListView.builder(
+          itemCount: scannedHistory.length,
+          itemBuilder: (context, index) {
+            final item = scannedHistory[index];
+            return InkWell(
+              onTap: () {
+                // Navigate to a detailed page when tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ProductDetailsPage(barcodeResult: item.barcode)),
+                );
+              },
+              child: ListTile(
+                leading: Hero(
+                  tag: item.barcode, // Unique tag for the Hero animation
+                  child: Icon(Icons.qr_code),
                 ),
-              );
-            },
-            child: ListTile(
-              leading: Hero(
-                tag: item.barcode, // Unique tag for the Hero animation
-                child: Icon(Icons.qr_code),
+                title: Text(item.barcode),
+                subtitle: Text(item.date),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(item.name),
+                    Text(item.brand),
+                    Text(item.quality),
+                  ],
+                ),
               ),
-              title: Text(item.barcode),
-              subtitle: Text(item.date),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(item.name),
-                  Text(item.brand),
-                  Text(item.quality),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
         bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
@@ -177,7 +177,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     );
                   }
                   //if (selectedIndex == 2) {
-                    /* 
+                  /* 
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -199,14 +199,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   text: 'Scan',
                 ),
                 //GButton(
-                  //icon: Icons.account_circle,
-                  //text: 'Profile',
+                //icon: Icons.account_circle,
+                //text: 'Profile',
                 //)
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
 
