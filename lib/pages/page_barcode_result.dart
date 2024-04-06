@@ -301,33 +301,11 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                     // startBarcodeScan;
                   }
                   if (selectedIndex == 2) {
-                    /* 
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            pageProfil(), //remplacer par le nom de la  page,
-                      ),
-                    );
-                    */
+                    
                   }
                 });
               },
-              tabs: const [
-                GButton(
-                  icon: Icons.history,
-                  text: 'History',
-                ),
-                GButton(
-                  icon: Icons.barcode_reader,
-                  text: 'Scan',
-
-                ),
-              );
-              */
-                }
-              });
-            },
+           
             tabs: const [
               GButton(
                 icon: Icons.history,
