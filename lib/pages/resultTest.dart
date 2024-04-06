@@ -7,11 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum NutrientQuality { good, acceptable, bad }
 
 const sugarGoodMax = 5.0;
-const sugarAcceptableMax = 15.0;
-const saturatedFatGoodMax = 1.5;
-const saturatedFatAcceptableMax = 5.0;
-const sodiumGoodMax = 150.0;
-const sodiumAcceptableMax = 500.0;
+const sugarAcceptableMax = 13.0;
+const saturatedFatGoodMax = 0.5;
+const saturatedFatAcceptableMax = 0.9;
+const sodiumGoodMax = 0.15;
+const sodiumAcceptableMax = 0.3;
 const fiberGoodMin = 3.0;
 const fiberAcceptableMin = 6.0;
 const proteinGoodMin = 5.0;
@@ -26,6 +26,7 @@ class Product {
   final double sodium;
   final double sugars;
   final double saturatedFat;
+  final String nutriScoreGrade;
 
   Product({
     required this.imageUrl,
@@ -35,6 +36,7 @@ class Product {
     required this.sodium,
     required this.sugars,
     required this.saturatedFat,
+    required this.nutriScoreGrade,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -46,7 +48,25 @@ class Product {
       sodium: json['nutriments']['sodium_100g']?.toDouble() ?? 0.0,
       sugars: json['nutriments']['sugars_100g']?.toDouble() ?? 0.0,
       saturatedFat: json['nutriments']['saturated-fat_100g']?.toDouble() ?? 0.0,
+      nutriScoreGrade: json['nutriscore_grade'] ?? '',
     );
+  }
+
+  Color getNutriScoreColor() {
+    switch (nutriScoreGrade.toLowerCase()) {
+      case 'a':
+        return Colors.green;
+      case 'b':
+        return Colors.lightGreen;
+      case 'c':
+        return Colors.yellow;
+      case 'd':
+        return Colors.deepOrange;
+      case 'e':
+        return Colors.red;
+      default:
+        return Colors.grey; // In case the grade is not recognized
+    }
   }
 
   NutrientQuality getQuality(
@@ -303,13 +323,57 @@ class ProductDetails extends StatelessWidget {
 
     return ListView(
       children: <Widget>[
-        Image.network(product.imageUrl, height: 200, fit: BoxFit.cover),
         Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(product.imageUrl, width: 100, fit: BoxFit.fitWidth),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Nutrition Facts',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 27,
+                        ),
+                      ),
+                      Text(
+                        'Per 100g',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Calories: ${product.energyKcal.toStringAsFixed(2)} kcal',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
           padding: const EdgeInsets.all(8.0),
+          color: product.getNutriScoreColor(),
           child: Text(
-            'Product Rating',
+            'Nutri-Score: ${product.nutriScoreGrade.toUpperCase()}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -324,7 +388,6 @@ class ProductDetails extends StatelessWidget {
               Text('Qualités', style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Column(children: qualityAttributes),
         ),
-        // ... other widgets ...
       ],
     );
   }
