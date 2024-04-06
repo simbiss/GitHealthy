@@ -77,50 +77,55 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         appBar: AppBar(
           title: const Text("Scan Barcode"),
         ),
         body: Center(
           child: Column(
-            children: [
-              ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(15), // Adjust the radius as needed
-                child: Image.network(
-                  'https://github.com/simbiss/MariHacks7/blob/main/lib/images/githealthy.png?raw=true',
-                  height: 300, // Adjust the height as needed
-                  fit: BoxFit.cover, // Ensure the image covers the entire space
-                ),
-              ),
+            children: [ClipRRect(
+    borderRadius: BorderRadius.circular(15), // Adjust the radius as needed
+    child: Image.network(
+      'https://github.com/simbiss/MariHacks7/blob/main/lib/images/githealthy.png?raw=true',
+      height: 300, // Adjust the height as needed
+      fit: BoxFit.cover, // Ensure the image covers the entire space
+    ),
+  ),
 
               if (_userName.isNotEmpty)
                 SizedBox(
-                  width: 200,
-                  height: 150,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: Text(
-                        'Welcome, $_userName',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18, // Adjust the font size as needed
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+  width: 200,
+  height: 300,
+  child: Center(
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Text(
+  'Welcome, $_userName',
+  style: TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 18, // Adjust the font size as needed
+  ),
+),
+
+    ),
+  ),
+),
 
               ElevatedButton(
                 onPressed: startBarcodeScan,
                 child: Text('Start Scanning'),
+                
               ),
-              SizedBox(height: 20), // Spacing between buttons
-              TextButton(
+              SizedBox(height: 150), // Spacing between buttons
+              ElevatedButton(
                 onPressed: _clearUserName,
-                child: const Text('Reset User'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
+                child: Text('Reset User'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors
+                      .red, 
+                  textStyle: TextStyle(
+      color: Colors.white, // Set the text color to white
+    ),// Provide a different color to indicate a destructive action
                 ),
               ),
             ],
@@ -159,7 +164,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                     );
                   }
                   //if (selectedIndex == 2) {
-                  /* 
+                    /* 
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -181,8 +186,8 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                   text: 'Scan',
                 ),
                 //GButton(
-                //icon: Icons.account_circle,
-                //text: 'Profile',
+                  //icon: Icons.account_circle,
+                  //text: 'Profile',
                 //)
               ],
             ),
