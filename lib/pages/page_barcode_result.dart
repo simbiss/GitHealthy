@@ -2,14 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:marihacks7/pages/page_camera_scanner.dart';
 import 'package:marihacks7/pages/page_scan_history.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:flutter/material.dart';
-import 'package:marihacks7/service/checkBarcode.dart';
-import 'package:http/http.dart' as http;
 
 Future<Product> fetchProduct(String barcodeResult) async {
   final response = await http.get(Uri.parse(
@@ -93,7 +90,7 @@ class BarcodeResultPage extends StatefulWidget {
 
 class _BarcodeResultPageState extends State<BarcodeResultPage> {
   late Future<Product> futureProduct;
-  int selectedIndex = 0;
+  int selectedIndex = 1;
   @override
   void initState() {
     super.initState();
@@ -173,7 +170,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
           },
         ),
       ),
-        bottomNavigationBar: Container(
+      bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -188,17 +185,6 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                 setState(() {
                   selectedIndex = index;
                   if (selectedIndex == 0) {
-                    /* 
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            pageProfil(), //remplacer par le nom de la  page,
-                      ),
-                    );
-                    */
-                  }
-                  if (selectedIndex == 1) {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -206,6 +192,9 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                             HistoryPage(),
                       ),
                     );
+                  }
+                  if (selectedIndex == 1) {
+                    // startBarcodeScan;
                   }
                   if (selectedIndex == 2) {
                     /* 
@@ -222,12 +211,12 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
               },
               tabs: const [
                 GButton(
-                  icon: Icons.map_outlined,
-                  text: 'Map',
+                  icon: Icons.history,
+                  text: 'History',
                 ),
                 GButton(
-                  icon: Icons.sunny,
-                  text: 'Weather',
+                  icon: Icons.barcode_reader,
+                  text: 'Scan',
                 ),
                 GButton(
                   icon: Icons.account_circle,
