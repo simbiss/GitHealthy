@@ -27,6 +27,7 @@ class Product {
   final double sugars;
   final double saturatedFat;
   final String nutriScoreGrade;
+  final String productName;
 
   Product({
     required this.imageUrl,
@@ -37,6 +38,7 @@ class Product {
     required this.sugars,
     required this.saturatedFat,
     required this.nutriScoreGrade,
+    required this.productName,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class Product {
       sugars: json['nutriments']['sugars_100g']?.toDouble() ?? 0.0,
       saturatedFat: json['nutriments']['saturated-fat_100g']?.toDouble() ?? 0.0,
       nutriScoreGrade: json['nutriscore_grade'] ?? '',
+      productName: json['product_name_en'] ?? '',
     );
   }
 
@@ -336,10 +339,19 @@ class ProductDetails extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Nutrition Facts',
+                        product.productName,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 27,
+                          fontSize: 28,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Text(
+                          'Nutrition Facts',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                       Text(
