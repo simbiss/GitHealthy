@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:marihacks7/service/checkBarcode.dart';
 import 'package:http/http.dart' as http;
 
-  Future<Product> fetchProduct() async {
+  Future<Product> fetchProduct(String barcodeResult) async {
     final response = await http.get(Uri.parse(
-        'https://world.openfoodfacts.net/api/v2/product/4001686396452'));
+        'https://world.openfoodfacts.net/api/v2/product/$barcodeResult'));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -88,7 +88,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
   @override
   void initState() {
     super.initState();
-    futureProduct = fetchProduct();
+    futureProduct = fetchProduct(widget.barcodeResult);
   }
 
   @override
