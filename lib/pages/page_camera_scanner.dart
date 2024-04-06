@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marihacks7/service/scan_service.dart';
+import 'package:marihacks7/pages/page_barcode_result.dart';
 
 class BarcodeScanPage extends StatefulWidget {
   @override
@@ -12,8 +13,12 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   void _startBarcodeScan() async {
     String barcodeResult = await _scanService.scanBarcode();
     if (barcodeResult.isNotEmpty) {
-      // Do something with the result, e.g., fetch product details
-      print("Scanned Barcode: $barcodeResult");
+      // Navigate to the BarcodeResultPage with the barcode result
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => BarcodeResultPage(barcodeResult: barcodeResult),
+        ),
+      );
     }
   }
 
