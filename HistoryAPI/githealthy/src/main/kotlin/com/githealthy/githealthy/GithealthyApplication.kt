@@ -54,22 +54,14 @@ class UserController {
 fun addBarcode(
     @PathVariable userId: String,
     @PathVariable barcode: String,
-    @RequestParam imageUrl: String,
-    @RequestParam productName: String
 ): ResponseEntity<Any> {
     try {
-        // Validate imageUrl and productName
-        if (imageUrl.isEmpty() || productName.isEmpty()) {
-            return ResponseEntity.badRequest().body("Image URL and product name are required")
-        }
 
         // Create a document with barcode, date, image URL, and product name
         val currentDate = LocalDate.now().toString()
         val barcodeDocument = Document("barcode", barcode)
             .append("date", currentDate)
-            .append("image_front_url", imageUrl)
-            .append("product_name", productName)
-
+          
         // Your code to update the database with the barcodeDocument
         
         return ResponseEntity.ok().build() // Return a success response
