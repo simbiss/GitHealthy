@@ -48,7 +48,7 @@ class UserController {
     }
 
     @PostMapping("/{userId}/barcodes/{barcode}")
-    fun addBarcode(@PathVariable userId: String, @PathVariable barcode: Int): Document {
+    fun addBarcode(@PathVariable userId: String, @PathVariable barcode: String): Document {
         val currentDate = LocalDate.now().toString()
         val barcodeDocument = Document("barcode", barcode)
             .append("date", currentDate)
@@ -63,7 +63,7 @@ class UserController {
     }
 
     @DeleteMapping("/{userId}/barcodes/{barcode}")
-    fun deleteBarcode(@PathVariable userId: String, @PathVariable barcode: Int): String {
+    fun deleteBarcode(@PathVariable userId: String, @PathVariable barcode: String): String {
         val result = collection.updateOne(Document("userid", userId), Document("\$pull", Document("barcodes", barcode)))
         return if (result.modifiedCount > 0) "Barcode deleted successfully" else "Barcode not found"
     }
