@@ -110,9 +110,62 @@ Future<Product> fetchProductData(String barcodeResult) async {
   }
 }
 
+// Fetch Reccomendations
+
+  Future<List<Map<String, dynamic>>> fetchRecommendations(String barcodeResult) async {
+    final response = await http.get(Uri.parse(
+        'https://world.openfoodfacts.net/api/v2/product/$barcodeResult&fields=categories_hierarchy'));
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, then parse the JSON.
+      var data = jsonDecode(response.body);
+
+      // Extract categories from the response
+      var categories = data['product']['categories_hierarchy'];
+      var categorieString =
+          categories.map((category) => 'tag_0=$category').join('&');
+
+      var url = Uri.parse(
+          'https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&$categorieString&json=1&nutriscore_grade=a&fields=code,product_name,image_front_url&page_size=5');
+
+      try {
+        var response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          var data = json.decode(response.body);
+
+          // Extract the items from the response
+          List<Map<String, dynamic>> items = [];
+          for (var product in data['products']) {
+            var item = {
+              'code': product['code'],
+              'product_name': product['product_name'],
+              'image_url': product['image_front_url'],
+            };
+            items.add(item);
+          }
+
+          // Return the list of items
+          return items;
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+          return [];
+        }
+      } catch (e) {
+        print('Error fetching data: $e');
+        return [];
+      }
+    } else {
+      // If the server does not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
+
 // Main product details page
 class ProductDetailsPage extends StatefulWidget {
   final String barcodeResult;
+  
 
   const ProductDetailsPage({Key? key, required this.barcodeResult})
       : super(key: key);
@@ -123,12 +176,13 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late Future<Product> futureProduct;
+  late Future<List<Map<String, dynamic>>> futureRecs;
 
   @override
   void initState() {
     super.initState();
     futureProduct = fetchProductData(widget.barcodeResult);
-
+    futureRecs = fetchRecommendations(widget.barcodeResult);
     _addBarcodeToDatabase(widget.barcodeResult);
   }
 
@@ -186,7 +240,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             } else if (!snapshot.hasData) {
               return Center(child: Text('Product not found'));
             } else {
-              return ProductDetails(snapshot.data!);
+              return ProductDetails(snapshot.data!, futureRecs: futureRecs);
             }
           } else {
             return Center(child: CircularProgressIndicator());
@@ -200,8 +254,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 // Widget that displays the product details
 class ProductDetails extends StatelessWidget {
   final Product product;
+  final Future<List<Map<String, dynamic>>> futureRecs;
 
-  ProductDetails(this.product);
+  ProductDetails(this.product ,{required this.futureRecs});
 
   Widget _buildAttributeRow(IconData icon, String nutrient, double amount) {
     NutrientQuality quality;
@@ -301,7 +356,8 @@ class ProductDetails extends StatelessWidget {
             : qualityAttributes)
         .add(proteinAttribute);
 
-    return ListView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Image.network(product.imageUrl, height: 200, fit: BoxFit.cover),
         Padding(
@@ -324,7 +380,47 @@ class ProductDetails extends StatelessWidget {
               Text('Qualités', style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Column(children: qualityAttributes),
         ),
-        // ... other widgets ...
+        SizedBox(
+          height: 200,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: futureRecs,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data![index];
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to a detailed page when tapped
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProductDetailsPage(barcodeResult: item['code']),)
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network(item['image_url'],
+                                  width: 100, height: 100),
+                              SizedBox(height: 8),
+                              Text(item['product_name']),
+                              SizedBox(height: 4),
+                              Text('Code: ${item['code']}'),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+            ),
       ],
     );
   }

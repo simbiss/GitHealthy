@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:marihacks7/pages/page_barcode_result.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:marihacks7/pages/resultTest.dart';
 
 // A mock class to represent a scanned item.
 class ScannedItem {
@@ -118,7 +119,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>BarcodeResultPage(barcodeResult: item.barcode)
+                  builder: (context) =>ProductDetailsPage(barcodeResult: item.barcode)
                 ),
               );
             },

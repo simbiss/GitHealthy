@@ -72,7 +72,9 @@ class ProductDetails {
       keywords:
           json['_keywords'] is List ? List<String>.from(json['_keywords']) : [],
       brands: json['brands'] ?? '',
-      categories: json['categories_hierarchy'] is List ? List<String>.from(json['categories_hierarchy']) : [],
+      categories: json['categories_hierarchy'] is List
+          ? List<String>.from(json['categories_hierarchy'])
+          : [],
       productName: json['product_name'] ?? '',
       quantity: json['quantity'] ?? '',
       allergensTags: json['allergens_tags'] is List
@@ -137,14 +139,12 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchRecommendations(
-      String barcodeResult) async {
+  Future<List<Map<String, dynamic>>> fetchRecommendations(String barcodeResult) async {
     final response = await http.get(Uri.parse(
         'https://world.openfoodfacts.net/api/v2/product/$barcodeResult&fields=categories_hierarchy'));
 
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, then parse the JSON.
-      // var data = json.decode(response.body);
       var data = Product.fromJson(jsonDecode(response.body));
 
       // Extract categories from the response
@@ -192,36 +192,74 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-        appBar: AppBar(
-          title: const Text('Scanned Barcode'),
-        ),
-        body: Center(
-          child:Column(
-            children: [
-              FutureBuilder<Product>(
-                future: futureProduct,
+      appBar: AppBar(
+        title: const Text('Scanned Barcode'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            FutureBuilder<Product>(
+              future: futureProduct,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.pink[900]!,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: Image.network(
+                              snapshot.data!.product.imageFrontUrl),
+                        ),
+                        Text(snapshot.data!.code),
+                        Text(snapshot.data!.product.productName),
+                      ],
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+            Expanded(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: futureRecs,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.pink[900]!,
-                                width: 2.0,
-                              ),
-                            ),
-                            child: Image.network(
-                                snapshot.data!.product.imageFrontUrl),
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data![index];
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to a detailed page when tapped
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BarcodeResultPage(
+                                      barcodeResult: item['code'])),
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network(item['image_url'],
+                                  width: 100, height: 100),
+                              SizedBox(height: 8),
+                              Text(item['product_name']),
+                              SizedBox(height: 4),
+                              Text('Code: ${item['code']}'),
+                            ],
                           ),
-                          Text(snapshot.data!.code),
-                          Text(snapshot.data!.product.productName),
-                          
-                        ],
-                      ),
+                        );
+                      },
                     );
                   } else if (snapshot.hasError) {
                     return Text('${snapshot.error}');
@@ -229,85 +267,39 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                   return CircularProgressIndicator();
                 },
               ),
-              Expanded(
-                child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: futureRecs,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          var item = snapshot.data![index];
-                          return GestureDetector(
-                            onTap: () {
-              // Navigate to a detailed page when tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                builder: (context) =>BarcodeResultPage(barcodeResult: item['code'])
-
-                ),
-              );
-            },
-                            
-                            child: Column(
-                              
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.network(item['image_url'],
-                                    width: 100, height: 100),
-                                SizedBox(height: 8),
-                                Text(item['product_name']),
-                                SizedBox(height: 4),
-                                Text('Code: ${item['code']}'),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error}');
-                    }
-                    return CircularProgressIndicator();
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-        bottomNavigationBar: Container(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: GNav(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              tabBackgroundColor: Theme.of(context).colorScheme.primary,
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              gap: 12,
-              padding: const EdgeInsets.all(20),
-              selectedIndex: 0,
-              onTabChange: (index) {
-                setState(() {
-                  selectedIndex = index;
-                  if (selectedIndex == 0) {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            HistoryPage(),
-                      ),
-                    );
-                  }
-                  if (selectedIndex == 1) {
-                    // startBarcodeScan;
-                  }
-                  if (selectedIndex == 2) {
-                    
-                  }
-                });
-              },
-           
+      ),
+      bottomNavigationBar: Container(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: GNav(
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            tabBackgroundColor: Theme.of(context).colorScheme.primary,
+            activeColor: Theme.of(context).colorScheme.onPrimary,
+            gap: 12,
+            padding: const EdgeInsets.all(20),
+            selectedIndex: 0,
+            onTabChange: (index) {
+              setState(() {
+                selectedIndex = index;
+                if (selectedIndex == 0) {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          HistoryPage(),
+                    ),
+                  );
+                }
+                if (selectedIndex == 1) {
+                  // startBarcodeScan;
+                }
+                if (selectedIndex == 2) {}
+              });
+            },
             tabs: const [
               GButton(
                 icon: Icons.history,
