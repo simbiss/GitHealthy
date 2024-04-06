@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.json.JSONObject
+import kotlinx.serialization.json.Json
+import java.net.URL
 
 @SpringBootApplication
 class GithealthyApplication
@@ -21,7 +24,7 @@ fun main(args: Array<String>) {
 @RequestMapping("/api")
 class UserController {
 
-    private val connectionString =  "mongodb+srv://<username>:<password>@githealthy.39trsfo.mongodb.net/?retryWrites=true&w=majority&appName=GitHealthy"
+    private val connectionString =  "mongodb+srv://v34l:serv@githealthy.39trsfo.mongodb.net/?retryWrites=true&w=majority&appName=GitHealthy"
 
     private val mongoClient = MongoClients.create(connectionString)
     private val database = mongoClient.getDatabase("GitHealthy")
@@ -33,11 +36,11 @@ class UserController {
 
         val existingUser = collection.find(Document("userid", userId)).first()
         return if (existingUser != null) {
-           ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists")
+           "User already exists"
         } else {
             val userDocument = Document("userid", userId)
             collection.insertOne(userDocument)
-            ResponseEntity.ok("User added successfully")
+            "User added successfully"
         }
     }
 
@@ -47,33 +50,36 @@ class UserController {
         return user?.getList("barcodes", Document::class.java) ?: emptyList()
     }
 
-  @PostMapping("/{userId}/barcodes/{barcode}")
-fun addBarcode(@PathVariable userId: String, @PathVariable barcode: String): Document {
-    val currentDate = LocalDate.now().toString()
-    val barcodeDocument = Document("barcode", barcode)
-        .append("date", currentDate)
-
-    val query = Document("userid", userId).append("barcodes.barcode", barcode)
-    val update = Document("\$set", Document("barcodes.$.date", currentDate))
-
-    val result = collection.updateOne(query, update)
-
-    return if (result.modifiedCount == 0L) {
-        val updateResult = collection.updateOne(
-            Document("userid", userId),
-            Document("\$addToSet", Document("barcodes", barcodeDocument))
-        )
-        if (updateResult.modifiedCount == 0L) {
-            val newUserDocument = Document("userid", userId).append("barcodes", listOf(barcodeDocument))
-            collection.insertOne(newUserDocument)
-            newUserDocument
-        } else {
-            collection.find(Document("userid", userId)).first()!!
+@PostMapping("/{userId}/barcodes/{barcode}")
+fun addBarcode(
+    @PathVariable userId: String,
+    @PathVariable barcode: String,
+    @RequestParam imageUrl: String,
+    @RequestParam productName: String
+): ResponseEntity<Any> {
+    try {
+        // Validate imageUrl and productName
+        if (imageUrl.isEmpty() || productName.isEmpty()) {
+            return ResponseEntity.badRequest().body("Image URL and product name are required")
         }
-    } else {
-        collection.find(Document("userid", userId)).first()!!
+
+        // Create a document with barcode, date, image URL, and product name
+        val currentDate = LocalDate.now().toString()
+        val barcodeDocument = Document("barcode", barcode)
+            .append("date", currentDate)
+            .append("image_front_url", imageUrl)
+            .append("product_name", productName)
+
+        // Your code to update the database with the barcodeDocument
+        
+        return ResponseEntity.ok().build() // Return a success response
+    } catch (e: Exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding barcode: ${e.message}")
     }
 }
+
+
+ 
 
     @DeleteMapping("/{userId}/barcodes/{barcode}")
     fun deleteBarcode(@PathVariable userId: String, @PathVariable barcode: String): String {
