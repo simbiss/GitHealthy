@@ -118,7 +118,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailedItemPage(item: item),
+                  builder: (context) =>BarcodeResultPage(barcodeResult: item.barcode)
                 ),
               );
             },
