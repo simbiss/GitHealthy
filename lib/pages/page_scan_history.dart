@@ -15,9 +15,15 @@ final List<ScannedItem> scannedHistory = [
   ScannedItem('Monster Energy Zero Sugar', 'Monster energy', 'Médiocre',
       'À l\'instant'),
   ScannedItem('Stax Salt & Vinegar', 'Lay\'s', 'Mauvais', 'il y a 1 heure'),
+  
 ];
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends StatefulWidget {
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,8 +43,8 @@ class HistoryPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = scannedHistory[index];
           return ListTile(
-            leading: Image.network(
-                'path/to/item/image.png'), // Placeholder for item image
+            // leading: Image.network(
+                // 'marihacks7/images/oreo.png'), // Placeholder for item image
             title: Text(item.name),
             subtitle: Text(item.brand),
             trailing: Column(
