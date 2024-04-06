@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:marihacks7/pages/page_camera_scanner.dart';
 import 'package:marihacks7/pages/page_scan_history.dart';
 import 'package:marihacks7/pages/page_username.dart';
+import 'package:marihacks7/pages/resultTest.dart';
 
 void main() {
   runApp(const MyApp());
@@ -97,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
               tabBackgroundColor: Theme.of(context).colorScheme.primary,
               activeColor: Theme.of(context).colorScheme.onPrimary,
               gap: 12,
-              padding: const EdgeInsets.all(20),  
+              padding: const EdgeInsets.all(20),
               selectedIndex: 0,
               onTabChange: (index) {
                 setState(() {

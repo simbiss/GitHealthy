@@ -192,6 +192,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         appBar: AppBar(
           title: const Text('Scanned Barcode'),
         ),
@@ -244,6 +245,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                 context,
                 MaterialPageRoute(
                 builder: (context) =>BarcodeResultPage(barcodeResult: item['code'])
+
                 ),
               );
             },
@@ -319,14 +321,30 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                 GButton(
                   icon: Icons.barcode_reader,
                   text: 'Scan',
+
                 ),
-                GButton(
-                  icon: Icons.account_circle,
-                  text: 'Profile',
-                )
-              ],
-            ),
+              );
+              */
+                }
+              });
+            },
+            tabs: const [
+              GButton(
+                icon: Icons.history,
+                text: 'History',
+              ),
+              GButton(
+                icon: Icons.barcode_reader,
+                text: 'Scan',
+              ),
+              GButton(
+                icon: Icons.account_circle,
+                text: 'Profile',
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
