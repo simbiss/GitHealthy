@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:marihacks7/pages/page_barcode_result.dart';
+import 'package:marihacks7/pages/page_camera_scanner.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:marihacks7/pages/resultTest.dart';
@@ -36,7 +37,7 @@ class ScannedItem {
 class DetailedItemPage extends StatelessWidget {
   final ScannedItem item;
   const DetailedItemPage({Key? key, required this.item}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +144,7 @@ class _HistoryPageState extends State<HistoryPage> {
           );
         },
       ),
-           bottomNavigationBar: Container(
+        bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -167,9 +168,15 @@ class _HistoryPageState extends State<HistoryPage> {
                     );
                   }
                   if (selectedIndex == 1) {
-                    // startBarcodeScan;
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const BarcodeScanPage(),
+                      ),
+                    );
                   }
-                  if (selectedIndex == 2) {
+                  //if (selectedIndex == 2) {
                     /* 
                     Navigator.push(
                       context,
@@ -179,7 +186,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       ),
                     );
                     */
-                  }
+                  //}
                 });
               },
               tabs: const [
@@ -191,10 +198,10 @@ class _HistoryPageState extends State<HistoryPage> {
                   icon: Icons.barcode_reader,
                   text: 'Scan',
                 ),
-                GButton(
-                  icon: Icons.account_circle,
-                  text: 'Profile',
-                )
+                //GButton(
+                  //icon: Icons.account_circle,
+                  //text: 'Profile',
+                //)
               ],
             ),
           ),
