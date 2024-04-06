@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marihacks7/pages/page_username.dart';
 import 'package:marihacks7/service/scan_service.dart';
 import 'package:marihacks7/pages/page_barcode_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +28,13 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
         _userName = userName;
       });
     }
+  }
+
+  Future<void> _clearUserName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userName');
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => WelcomePage()));
   }
 
   void _startBarcodeScan() async {
@@ -59,6 +67,15 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
             ElevatedButton(
               onPressed: _startBarcodeScan,
               child: Text('Start Scanning'),
+            ),
+            SizedBox(height: 10), // Spacing between buttons
+            ElevatedButton(
+              onPressed: _clearUserName,
+              child: Text('Reset User'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors
+                    .red, // Provide a different color to indicate a destructive action
+              ),
             ),
           ],
         ),

@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
               tabBackgroundColor: Theme.of(context).colorScheme.primary,
               activeColor: Theme.of(context).colorScheme.onPrimary,
               gap: 12,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),  
               selectedIndex: 0,
               onTabChange: (index) {
                 setState(() {

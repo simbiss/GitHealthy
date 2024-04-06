@@ -35,9 +35,9 @@ class _WelcomePageState extends State<WelcomePage> {
     if (_nameController.text.isNotEmpty) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('userName', _nameController.text.trim());
-      setState(() {
-        _isUserNew = false;
-      });
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => BarcodeScanPage()),
+      );
     }
   }
 
