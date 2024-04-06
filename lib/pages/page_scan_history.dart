@@ -14,22 +14,22 @@ class ScannedItem {
   final String date;
   // Préparation pour les futures propriétés
   final String name;
-  final String brand;
-  final String quality;
+  final String image;
+ 
 
   ScannedItem({
     this.barcode = '',
     this.date = '',
-    this.name = 'Unknown Name', // Valeurs par défaut pour les futurs champs
-    this.brand = 'Unknown Brand',
-    this.quality = 'Unknown Quality',
+    this.name = '',
+    this.image =  ''
   });
 
   factory ScannedItem.fromJson(Map<String, dynamic> json) {
     return ScannedItem(
       barcode: json['barcode'] ?? 'Unknown Barcode',
       date: json['date'] ?? 'Unknown Date',
-      // Les autres champs restent avec des valeurs par défaut pour le moment
+      name: json['product_name'] ?? 'Unknown Name',
+      image: json['image_front_url'] ?? 'https://github.com/simbiss/MariHacks7/blob/main/lib/images/githealthy.png?raw=true'
     );
   }
 }
@@ -127,19 +127,14 @@ class _HistoryPageState extends State<HistoryPage> {
             child: ListTile(
               leading: Hero(
                 tag: item.barcode, // Unique tag for the Hero animation
-                child: Icon(Icons.qr_code),
+                child: Image.network(
+                  item.image,
+                  height: 120, // Adjust the height as needed
+                  fit: BoxFit.cover, // Ensure the image covers the entire space
+                ),
               ),
-              title: Text(item.barcode),
+              title: Text(item.name),
               subtitle: Text(item.date),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(item.name),
-                  Text(item.brand),
-                  Text(item.quality),
-                ],
-              ),
             ),
           );
         },
