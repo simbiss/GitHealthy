@@ -20,7 +20,8 @@ fun main(args: Array<String>) {
 class UserController {
 
     // Use environment variables or other secure methods to load sensitive information like connection strings
-    private val connectionString = ""
+    private val connectionString =  "mongodb+srv://<username>:<password>@githealthy.39trsfo.mongodb.net/?retryWrites=true&w=majority&appName=GitHealthy"
+
     private val mongoClient = MongoClients.create(connectionString)
     private val database = mongoClient.getDatabase("GitHealthy")
     private val collection = database.getCollection("users")
@@ -68,5 +69,11 @@ class UserController {
         return if (result.modifiedCount > 0) "Barcode deleted successfully" else "Barcode not found"
     }
 
+    @DeleteMapping("/{userId}")
+    fun deleteUser(@PathVariable userId: String): String {
+    val result = collection.deleteOne(Document("userid", userId))
+    return if (result.deletedCount > 0) "User deleted successfully" else "User not found"
+    }
+    
     data class UserData(val userid: String)
 }
