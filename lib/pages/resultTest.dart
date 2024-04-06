@@ -148,8 +148,9 @@ Future<Product> fetchProductData(String barcodeResult) async {
       var categorieString =
           categories.map((category) => 'tag_0=$category').join('&');
 
+    
       var url = Uri.parse(
-          'https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&$categorieString&json=1&nutriscore_grade=a&fields=code,product_name,image_front_url&page_size=5');
+      'https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&$categorieString&json=1&nutriscore_grade=a&fields=code,product_name,image_front_url,nutriscore_grade&page_size=5');
 
       try {
         var response = await http.get(url);
@@ -161,12 +162,16 @@ Future<Product> fetchProductData(String barcodeResult) async {
           // Extract the items from the response
           List<Map<String, dynamic>> items = [];
           for (var product in data['products']) {
-            var item = {
+            if (product['nutriscore_grade']=='a' && product['code']!=barcodeResult){
+              var item = {
               'code': product['code'],
+              'nutriscore_grade': product['nutriscore_grade'],
               'product_name': product['product_name'],
               'image_url': product['image_front_url'],
             };
             items.add(item);
+            }
+            
           }
 
           // Return the list of items
@@ -484,7 +489,7 @@ class ProductDetails extends StatelessWidget {
                               SizedBox(height: 8),
                               Text(item['product_name']),
                               SizedBox(height: 4),
-                              Text('Code: ${item['code']}'),
+                              Text('Nutriscore: ${item['nutriscore_grade']}'),
                             ],
                           ),
                         );
