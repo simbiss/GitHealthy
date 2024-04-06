@@ -82,6 +82,7 @@ class ProductDetails {
     );
   }
 }
+
 class BarcodeResultPage extends StatefulWidget {
   final String barcodeResult;
 
@@ -137,42 +138,48 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scanned Barcode'),
-      ),
-      body: Center(
-        child: FutureBuilder<Product>(
-          future: futureProduct,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.pink[900]!, // Use dark pink color
-                          width: 2.0, // Border width
+        appBar: AppBar(
+          title: const Text('Scanned Barcode'),
+        ),
+        body: Center(
+          child: FutureBuilder<Product>(
+            future: futureProduct,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Card(
+                  elevation: 12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
+                        child: Image.network(
+                          snapshot.data!.product.imageFrontUrl,
+                          height: 500,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
                         ),
                       ),
-                      child: Image.network(snapshot.data!.product
-                          .imageFrontUrl), // Your content goes here
-                    ),
-                    Text(snapshot.data!.code),
-                    Text(snapshot.data!.product.productName),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
+                      ListTile(
+                          title: Text(snapshot.data!.product.productName),
+                          subtitle: Text(snapshot.data!.code)),
+                    ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
 
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
         ),
-      ),
         bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
