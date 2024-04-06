@@ -3,6 +3,8 @@ import 'package:marihacks7/service/scan_service.dart';
 import 'package:marihacks7/pages/page_barcode_result.dart';
 
 class BarcodeScanPage extends StatefulWidget {
+  const BarcodeScanPage({super.key});
+
   @override
   _BarcodeScanPageState createState() => _BarcodeScanPageState();
 }
@@ -26,12 +28,12 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scan Barcode"),
+        title: const Text("Scan Barcode"),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: _startBarcodeScan,
-          child: Text('Start Scanning'),
+          child: const Text('Start Scanning'),
         ),
       ),
     );

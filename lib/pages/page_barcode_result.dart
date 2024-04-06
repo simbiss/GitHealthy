@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:marihacks7/service/checkBarcode.dart';
 
 class BarcodeResultPage extends StatelessWidget {
   final String barcodeResult;
 
-  const BarcodeResultPage({Key? key, required this.barcodeResult})
-      : super(key: key);
+  const BarcodeResultPage({super.key, required this.barcodeResult});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scanned Barcode'),
+        title: const Text('Scanned Barcode'),
       ),
       body: Center(
         child: Text(
-          barcodeResult,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          OpenFoodFactsAPI.fetchProduct(barcodeResult),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
     );
