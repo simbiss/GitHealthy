@@ -5,27 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:marihacks7/service/checkBarcode.dart';
 import 'package:http/http.dart' as http;
 
-  Future<Product> fetchProduct(String barcodeResult) async {
-    final response = await http.get(Uri.parse(
-        'https://world.openfoodfacts.net/api/v2/product/$barcodeResult'));
+Future<Product> fetchProduct(String barcodeResult) async {
+  final response = await http.get(Uri.parse(
+      'https://world.openfoodfacts.net/api/v2/product/$barcodeResult'));
 
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return Product.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Product.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
   }
+}
+
 class Product {
   final String code;
   final ProductDetails product;
   final int status;
   final String statusVerbose;
 
-  Product({required this.code, required this.product, required this.status, required this.statusVerbose});
+  Product(
+      {required this.code,
+      required this.product,
+      required this.status,
+      required this.statusVerbose});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -72,7 +77,6 @@ class ProductDetails {
   }
 }
 
-
 class BarcodeResultPage extends StatefulWidget {
   final String barcodeResult;
 
@@ -106,7 +110,16 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Image.network(snapshot.data!.product.imageFrontUrl),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.pink[900]!, // Use dark pink color
+                          width: 2.0, // Border width
+                        ),
+                      ),
+                      child: Image.network(snapshot.data!.product
+                          .imageFrontUrl), // Your content goes here
+                    ),
                     Text(snapshot.data!.code),
                     Text(snapshot.data!.product.productName),
                   ],
