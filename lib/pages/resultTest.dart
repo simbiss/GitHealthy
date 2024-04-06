@@ -385,7 +385,7 @@ class ProductDetails extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(product.imageUrl, width: 70, fit: BoxFit.fitWidth),
+              Image.network(product.imageUrl, width: 65, fit: BoxFit.fitWidth),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0),
@@ -398,20 +398,10 @@ class ProductDetails extends StatelessWidget {
                           fontSize: 20,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Text(
-                          'Nutrition Facts',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
                       Text(
                         'Per 100g',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -455,7 +445,7 @@ class ProductDetails extends StatelessWidget {
           subtitle: Column(children: qualityAttributes),
         ),
         SizedBox(
-          height: 200,
+          height: 160,
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: futureRecs,
             builder: (context, snapshot) {
@@ -465,16 +455,20 @@ class ProductDetails extends StatelessWidget {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     var item = snapshot.data![index];
-                    return GestureDetector(
-                      onTap: () {
-                        // Navigate to a detailed page when tapped
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailsPage(
-                                  barcodeResult: item['code']),
-                            ));
-                      },
+                    return Container(
+                      width: MediaQuery.of(context).size.width /
+                          2, // Constrain the width of the item
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to a detailed page when tapped
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsPage(
+                                    barcodeResult: item['code']),
+                              ));
+                        },
+                      ),
                     );
                   },
                 );
