@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:marihacks7/pages/page_scan_history.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BarcodeResultPage extends StatefulWidget {
   final String barcodeResult;
-
   const BarcodeResultPage({Key? key, required this.barcodeResult})
       : super(key: key);
 
@@ -14,19 +17,57 @@ class BarcodeResultPage extends StatefulWidget {
 
 class _BarcodeResultPageState extends State<BarcodeResultPage> {
   int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _addBarcodeToDatabase(widget.barcodeResult);
+  }
+
+  Future<void> _addBarcodeToDatabase(String barcodeResult) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? username = prefs.getString('userName');
+
+    if (username == null) {
+      print("Username not found");
+      return;
+    }
+
+    final Uri uri =
+        Uri.parse('http://v34l.com:8080/api/$username/barcodes/$barcodeResult');
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({}),
+      );
+
+      if (response.statusCode == 200) {
+        print('Barcode added successfully');
+      } else {
+        print('Failed to add barcode: ${response.body}');
+      }
+    } catch (e) {
+      print('Error adding barcode: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Scanned Barcode'),
-      ),
-      body: Center(
-        child: Text(
-          widget.barcodeResult,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Text('Scanned Barcode'),
         ),
-      ),
-      bottomNavigationBar: Container(
+        body: Center(
+          child: Text(
+            widget.barcodeResult,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -41,7 +82,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                 setState(() {
                   selectedIndex = index;
                   if (selectedIndex == 0) {
-                  /* 
+                    /* 
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -89,7 +130,6 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
