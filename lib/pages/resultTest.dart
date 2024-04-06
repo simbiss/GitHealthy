@@ -445,7 +445,7 @@ class ProductDetails extends StatelessWidget {
           subtitle: Column(children: qualityAttributes),
         ),
         SizedBox(
-          height: 160,
+          height: 200,
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: futureRecs,
             builder: (context, snapshot) {
@@ -455,19 +455,26 @@ class ProductDetails extends StatelessWidget {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     var item = snapshot.data![index];
-                    return Container(
-                      width: MediaQuery.of(context).size.width /
-                          2, // Constrain the width of the item
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigate to a detailed page when tapped
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailsPage(
-                                    barcodeResult: item['code']),
-                              ));
-                        },
+                    return GestureDetector(
+                      onTap: () {
+                        // Navigate to a detailed page when tapped
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailsPage(
+                                  barcodeResult: item['code']),
+                            ));
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.network(item['image_url'],
+                              width: 100, height: 100),
+                          SizedBox(height: 8),
+                          Text(item['product_name']),
+                          SizedBox(height: 4),
+                          Text('Code: ${item['code']}'),
+                        ],
                       ),
                     );
                   },
