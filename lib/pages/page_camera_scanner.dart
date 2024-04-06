@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:marihacks7/pages/page_scan_history.dart';
 import 'package:marihacks7/pages/page_username.dart';
+import 'package:marihacks7/pages/resultTest.dart';
 import 'package:marihacks7/service/scan_service.dart';
 import 'package:marihacks7/pages/page_barcode_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +67,8 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
     if (barcodeResult.isNotEmpty) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => BarcodeResultPage(barcodeResult: barcodeResult),
+          builder: (context) =>
+              ProductDetailsPage(barcodeResult: barcodeResult),
         ),
       );
     }
@@ -75,36 +77,36 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scan Barcode"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_userName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Text('Welcome, $_userName',
-                    style: Theme.of(context).textTheme.headline6),
-              ),
-            ElevatedButton(
-              onPressed: startBarcodeScan,
-              child: Text('Start Scanning'),
-            ),
-            SizedBox(height: 10), // Spacing between buttons
-            ElevatedButton(
-              onPressed: _clearUserName,
-              child: Text('Reset User'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors
-                    .red, // Provide a different color to indicate a destructive action
-              ),
-            ),
-          ],
+
+        appBar: AppBar(
+          title: const Text("Scan Barcode"),
         ),
-      ),
-      bottomNavigationBar: Container(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_userName.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text('Welcome, $_userName'),
+                ),
+              ElevatedButton(
+                onPressed: startBarcodeScan,
+                child: Text('Start Scanning'),
+              ),
+              SizedBox(height: 10), // Spacing between buttons
+              ElevatedButton(
+                onPressed: _clearUserName,
+                child: Text('Reset User'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors
+                      .red, // Provide a different color to indicate a destructive action
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -114,7 +116,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               activeColor: Theme.of(context).colorScheme.onPrimary,
               gap: 12,
               padding: const EdgeInsets.all(20),
-              selectedIndex: 0,
+              selectedIndex: 1,
               onTabChange: (index) {
                 setState(() {
                   selectedIndex = index;
@@ -128,9 +130,15 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                     );
                   }
                   if (selectedIndex == 1) {
-                    startBarcodeScan;
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const BarcodeScanPage(),
+                      ),
+                    );
                   }
-                  if (selectedIndex == 2) {
+                  //if (selectedIndex == 2) {
                     /* 
                     Navigator.push(
                       context,
@@ -140,7 +148,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                       ),
                     );
                     */
-                  }
+                  //}
                 });
               },
               tabs: const [
@@ -152,14 +160,13 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                   icon: Icons.barcode_reader,
                   text: 'Scan',
                 ),
-                GButton(
-                  icon: Icons.account_circle,
-                  text: 'Profile',
-                )
+                //GButton(
+                  //icon: Icons.account_circle,
+                  //text: 'Profile',
+                //)
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
