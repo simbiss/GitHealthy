@@ -77,6 +77,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         appBar: AppBar(
           title: const Text("Scan Barcode"),
         ),
@@ -87,8 +88,7 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               if (_userName.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Text('Welcome, $_userName',
-                      style: Theme.of(context).textTheme.headline6),
+                  child: Text('Welcome, $_userName'),
                 ),
               ElevatedButton(
                 onPressed: startBarcodeScan,
