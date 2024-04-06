@@ -50,26 +50,20 @@ class UserController {
         return user?.getList("barcodes", Document::class.java) ?: emptyList()
     }
 
-@PostMapping("/{userId}/barcodes/{barcode}")
-fun addBarcode(
-    @PathVariable userId: String,
-    @PathVariable barcode: String,
-): ResponseEntity<Any> {
-    try {
-
-        // Create a document with barcode, date, image URL, and product name
+ @PostMapping("/{userId}/barcodes/{barcode}")
+    fun addBarcode(@PathVariable userId: String, @PathVariable barcode: String): Document {
         val currentDate = LocalDate.now().toString()
         val barcodeDocument = Document("barcode", barcode)
             .append("date", currentDate)
-          
-        // Your code to update the database with the barcodeDocument
-        
-        return ResponseEntity.ok().build() // Return a success response
-    } catch (e: Exception) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding barcode: ${e.message}")
+        val result = collection.updateOne(Document("userid", userId), Document("\$addToSet", Document("barcodes", barcodeDocument)))
+        if (result.modifiedCount == 0L) {
+            // User not found, create a new document with the user and barcode
+            val newUserDocument = Document("userid", userId).append("barcodes", listOf(barcodeDocument))
+            collection.insertOne(newUserDocument)
+            return newUserDocument
+        }
+        return collection.find(Document("userid", userId)).first()!!
     }
-}
-
 
  
 
