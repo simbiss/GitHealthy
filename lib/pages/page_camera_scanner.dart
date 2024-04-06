@@ -83,24 +83,49 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
         ),
         body: Center(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+            children: [ClipRRect(
+    borderRadius: BorderRadius.circular(15), // Adjust the radius as needed
+    child: Image.network(
+      'https://github.com/simbiss/MariHacks7/blob/main/lib/images/githealthy.png?raw=true',
+      height: 300, // Adjust the height as needed
+      fit: BoxFit.cover, // Ensure the image covers the entire space
+    ),
+  ),
+
               if (_userName.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Text('Welcome, $_userName'),
-                ),
+                SizedBox(
+  width: 200,
+  height: 300,
+  child: Center(
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Text(
+  'Welcome, $_userName',
+  style: TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 18, // Adjust the font size as needed
+  ),
+),
+
+    ),
+  ),
+),
+
               ElevatedButton(
                 onPressed: startBarcodeScan,
                 child: Text('Start Scanning'),
+                
               ),
-              SizedBox(height: 10), // Spacing between buttons
+              SizedBox(height: 150), // Spacing between buttons
               ElevatedButton(
                 onPressed: _clearUserName,
                 child: Text('Reset User'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors
-                      .red, // Provide a different color to indicate a destructive action
+                      .red, 
+                  textStyle: TextStyle(
+      color: Colors.white, // Set the text color to white
+    ),// Provide a different color to indicate a destructive action
                 ),
               ),
             ],
