@@ -102,7 +102,16 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
           future: futureProduct,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text(snapshot.data!.product.productName);
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Image.network(snapshot.data!.product.imageFrontUrl),
+                    Text(snapshot.data!.code),
+                    Text(snapshot.data!.product.productName),
+                  ],
+                ),
+              );
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
