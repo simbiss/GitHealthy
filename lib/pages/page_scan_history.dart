@@ -6,19 +6,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // A mock class to represent a scanned item.
 class ScannedItem {
+  final String barcode;
+  final String date;
+  // Préparation pour les futures propriétés
   final String name;
   final String brand;
   final String quality;
-  final String timeScanned;
 
-  ScannedItem(this.name, this.brand, this.quality, this.timeScanned);
+  ScannedItem({
+    this.barcode = '',
+    this.date = '',
+    this.name = 'Unknown Name', // Valeurs par défaut pour les futurs champs
+    this.brand = 'Unknown Brand',
+    this.quality = 'Unknown Quality',
+  });
 
   factory ScannedItem.fromJson(Map<String, dynamic> json) {
     return ScannedItem(
-      json['name'],
-      json['brand'],
-      json['quality'],
-      json['timeScanned'],
+      barcode: json['barcode'] ?? 'Unknown Barcode',
+      date: json['date'] ?? 'Unknown Date',
+      // Les autres champs restent avec des valeurs par défaut pour le moment
     );
   }
 }
@@ -76,14 +83,16 @@ class _HistoryPageState extends State<HistoryPage> {
         itemBuilder: (context, index) {
           final item = scannedHistory[index];
           return ListTile(
-            title: Text(item.name),
-            subtitle: Text(item.brand),
+            leading: Icon(Icons.qr_code),
+            title: Text(item.barcode),
+            subtitle: Text(item.date),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                Text(item.name),
+                Text(item.brand),
                 Text(item.quality),
-                Text(item.timeScanned),
               ],
             ),
           );
