@@ -395,7 +395,7 @@ class ProductDetails extends StatelessWidget {
                       Text(
                         product.productName,
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 20,
                         ),
                       ),
                       Padding(
@@ -404,14 +404,14 @@ class ProductDetails extends StatelessWidget {
                           'Nutrition Facts',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                       Text(
                         'Per 100g',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -421,7 +421,7 @@ class ProductDetails extends StatelessWidget {
                           'Calories: ${product.energyKcal.toStringAsFixed(2)} kcal',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 15,
                           ),
                         ),
                       ),
