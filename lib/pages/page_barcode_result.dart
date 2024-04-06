@@ -286,7 +286,7 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
               activeColor: Theme.of(context).colorScheme.onPrimary,
               gap: 12,
               padding: const EdgeInsets.all(20),
-              selectedIndex: 0,
+              selectedIndex: 1,
               onTabChange: (index) {
                 setState(() {
                   selectedIndex = index;
@@ -300,31 +300,44 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                     );
                   }
                   if (selectedIndex == 1) {
-                    // startBarcodeScan;
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const BarcodeScanPage(),
+                      ),
+                    );
                   }
-                  if (selectedIndex == 2) {
-                    
-                  }
+                  //if (selectedIndex == 2) {
+                    /* 
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            pageProfil(), //remplacer par le nom de la  page,
+                      ),
+                    );
+                    */
+                  //}
                 });
               },
-           
-            tabs: const [
-              GButton(
-                icon: Icons.history,
-                text: 'History',
-              ),
-              GButton(
-                icon: Icons.barcode_reader,
-                text: 'Scan',
-              ),
-              GButton(
-                icon: Icons.account_circle,
-                text: 'Profile',
-              ),
-            ],
+              tabs: const [
+                GButton(
+                  icon: Icons.history,
+                  text: 'History',
+                ),
+                GButton(
+                  icon: Icons.barcode_reader,
+                  text: 'Scan',
+                ),
+                //GButton(
+                  //icon: Icons.account_circle,
+                  //text: 'Profile',
+                //)
+              ],
+            ),
           ),
-        ),
-      ),
+        )
     );
   }
 }
