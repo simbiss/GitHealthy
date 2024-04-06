@@ -30,6 +30,34 @@ class ScannedItem {
   }
 }
 
+class DetailedItemPage extends StatelessWidget {
+  final ScannedItem item;
+
+  const DetailedItemPage({Key? key, required this.item}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(item.barcode), // Display barcode as title
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Hero(
+              tag: item.barcode, // Use the same tag as in HistoryPage
+              child: Icon(Icons.qr_code, size: 150.0),
+            ),
+            Text(item.date),
+            // Display other item details here
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class HistoryPage extends StatefulWidget {
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -82,18 +110,32 @@ class _HistoryPageState extends State<HistoryPage> {
         itemCount: scannedHistory.length,
         itemBuilder: (context, index) {
           final item = scannedHistory[index];
-          return ListTile(
-            leading: Icon(Icons.qr_code),
-            title: Text(item.barcode),
-            subtitle: Text(item.date),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(item.name),
-                Text(item.brand),
-                Text(item.quality),
-              ],
+          return InkWell(
+            onTap: () {
+              // Navigate to a detailed page when tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailedItemPage(item: item),
+                ),
+              );
+            },
+            child: ListTile(
+              leading: Hero(
+                tag: item.barcode, // Unique tag for the Hero animation
+                child: Icon(Icons.qr_code),
+              ),
+              title: Text(item.barcode),
+              subtitle: Text(item.date),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(item.name),
+                  Text(item.brand),
+                  Text(item.quality),
+                ],
+              ),
             ),
           );
         },
