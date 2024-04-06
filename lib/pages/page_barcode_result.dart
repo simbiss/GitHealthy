@@ -313,21 +313,6 @@ class _BarcodeResultPageState extends State<BarcodeResultPage> {
                   }
                 });
               },
-              tabs: const [
-                GButton(
-                  icon: Icons.history,
-                  text: 'History',
-                ),
-                GButton(
-                  icon: Icons.barcode_reader,
-                  text: 'Scan',
-
-                ),
-              );
-              */
-                }
-              });
-            },
             tabs: const [
               GButton(
                 icon: Icons.history,

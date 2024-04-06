@@ -65,7 +65,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  List<ScannedItem> scannedHistory = [];
+  List<Map<String, dynamic>> scannedHistory = [];
   int selectedIndex = 1;
   @override
   void initState() {
@@ -84,16 +84,22 @@ class _HistoryPageState extends State<HistoryPage> {
     }
 
     final Uri uri = Uri.parse('http://v34l.com:8080/api/$username/barcodes');
-
+    var url =Uri.parse('https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&$categorieString&json=1&nutriscore_grade=a&fields=code,product_name,image_front_url&page_size=5');
+    List<Map<String, dynamic>> items = [];
+    
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
-        final List<dynamic> fetchedItems = json.decode(response.body);
+        var fetchedItems = json.decode(response.body);
         setState(() {
-          scannedHistory = fetchedItems
-              .map((dynamic item) => ScannedItem.fromJson(item))
-              .toList();
-        });
+          for (var product in fetchedItems['products']) {
+            var item = {
+              'code': product['code'],
+              'product_name': product['product_name'],
+              'image_url': product['image_front_url'],
+            };
+            scannedHistory.add(item);
+      }});
       } else {
         throw Exception('Failed to load history');
       }
@@ -118,24 +124,23 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>BarcodeResultPage(barcodeResult: item.barcode)
+                  builder: (context) => DetailedItemPage(item: ScannedItem.fromJson(item),
                 ),
-              );
+              ));
             },
             child: ListTile(
               leading: Hero(
-                tag: item.barcode, // Unique tag for the Hero animation
+                tag: item['code'],
                 child: Icon(Icons.qr_code),
               ),
-              title: Text(item.barcode),
-              subtitle: Text(item.date),
+              title: item['code'],
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(item.name),
-                  Text(item.brand),
-                  Text(item.quality),
+                  Text(item['product_name']),
+                  Text(item['product_name']),
+                  Text(item['product_name']),
                 ],
               ),
             ),
