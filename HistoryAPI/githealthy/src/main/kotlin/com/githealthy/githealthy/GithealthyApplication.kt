@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 
 @SpringBootApplication
 class GithealthyApplication
@@ -19,7 +21,6 @@ fun main(args: Array<String>) {
 @RequestMapping("/api")
 class UserController {
 
-    // Use environment variables or other secure methods to load sensitive information like connection strings
     private val connectionString =  "mongodb+srv://<username>:<password>@githealthy.39trsfo.mongodb.net/?retryWrites=true&w=majority&appName=GitHealthy"
 
     private val mongoClient = MongoClients.create(connectionString)
@@ -30,15 +31,13 @@ class UserController {
     fun addUser(@RequestBody userData: UserData): String {
         val userId = userData.userid
 
-        // Check if user already exists
         val existingUser = collection.find(Document("userid", userId)).first()
         return if (existingUser != null) {
-            "User already exists"
+           ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists")
         } else {
-            // Add user to database
             val userDocument = Document("userid", userId)
             collection.insertOne(userDocument)
-            "User added successfully"
+            ResponseEntity.ok("User added successfully")
         }
     }
 
@@ -48,20 +47,33 @@ class UserController {
         return user?.getList("barcodes", Document::class.java) ?: emptyList()
     }
 
-    @PostMapping("/{userId}/barcodes/{barcode}")
-    fun addBarcode(@PathVariable userId: String, @PathVariable barcode: String): Document {
-        val currentDate = LocalDate.now().toString()
-        val barcodeDocument = Document("barcode", barcode)
-            .append("date", currentDate)
-        val result = collection.updateOne(Document("userid", userId), Document("\$addToSet", Document("barcodes", barcodeDocument)))
-        if (result.modifiedCount == 0L) {
-            // User not found, create a new document with the user and barcode
+  @PostMapping("/{userId}/barcodes/{barcode}")
+fun addBarcode(@PathVariable userId: String, @PathVariable barcode: String): Document {
+    val currentDate = LocalDate.now().toString()
+    val barcodeDocument = Document("barcode", barcode)
+        .append("date", currentDate)
+
+    val query = Document("userid", userId).append("barcodes.barcode", barcode)
+    val update = Document("\$set", Document("barcodes.$.date", currentDate))
+
+    val result = collection.updateOne(query, update)
+
+    return if (result.modifiedCount == 0L) {
+        val updateResult = collection.updateOne(
+            Document("userid", userId),
+            Document("\$addToSet", Document("barcodes", barcodeDocument))
+        )
+        if (updateResult.modifiedCount == 0L) {
             val newUserDocument = Document("userid", userId).append("barcodes", listOf(barcodeDocument))
             collection.insertOne(newUserDocument)
-            return newUserDocument
+            newUserDocument
+        } else {
+            collection.find(Document("userid", userId)).first()!!
         }
-        return collection.find(Document("userid", userId)).first()!!
+    } else {
+        collection.find(Document("userid", userId)).first()!!
     }
+}
 
     @DeleteMapping("/{userId}/barcodes/{barcode}")
     fun deleteBarcode(@PathVariable userId: String, @PathVariable barcode: String): String {
